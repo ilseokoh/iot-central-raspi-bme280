@@ -1,0 +1,32 @@
+{
+  "name": "iot-central-raspi-bme280",
+  "version": "1.0.0",
+  "description": "Raspberry pi with BME280 sensor for Azure IoT Central Node.js sample app ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilseokoh/iot-central-raspi-bme280.git"
+  },
+  "keywords": [
+    "iot",
+    "azure",
+    "central",
+    "raspberrypi",
+    "bme280",
+    "node"
+  ],
+  "author": "Il Seok Oh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ilseokoh/iot-central-raspi-bme280/issues"
+  },
+  "homepage": "https://github.com/ilseokoh/iot-central-raspi-bme280#readme",
+  "dependencies": {
+    "azure-iot-device": "^1.7.3",
+    "azure-iot-device-mqtt": "^1.7.3",
+    "bme280-sensor": "^0.1.6"
+  }
+}
