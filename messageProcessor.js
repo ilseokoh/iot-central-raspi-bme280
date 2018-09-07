@@ -39,4 +39,13 @@ function sendTelemetry() {
         fanmode: (sensorData.temperature_C > 25)  ? 1 : 0, 
         overheat: (sensorData.temperature_C > config.temperatureAlert) ? "ER123" : undefined
     });
+
+    var message = new Message(data);
+
+    client.sendEvent(message, (err, res) => {
+        console.log(`Sent message: ${message.getData()}` +
+                (err ? `; error: ${err.toString()}` : '') +
+                (res ? `; status: ${res.constructor.name}` : ''));
+    });
 }
+

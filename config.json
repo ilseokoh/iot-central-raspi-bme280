@@ -2,6 +2,8 @@
     "deviceConnectionString": "HostName=saas-iothub-fe1c12df-3695-4b1d-9e12-22012e6f308c.azure-devices.net;DeviceId=1yi2hhn;SharedAccessKey=Mz08GuWv0n5Ec8d/lT2w4QtuiVOpls/FNFKhX89rMrQ=",
     "deviceId": "Raspberry Pi Node",
     "interval":"2000", 
+    "serialNumber": "123-123",
+    "manufacturer": "Kevin Co",
     "LEDPin": 5, 
     "temperatureAlert": 30,
     "targetTemperature": 25,
