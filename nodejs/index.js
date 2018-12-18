@@ -132,6 +132,9 @@ function onAlertLEDOn(request, response) {
         }
     });
 
+    // LED 상태 전송
+    sendTelemetry({"AlertLEDStatus":"on"}, "led-status;v1");
+
     response.send(200, "Alert LED: " + (alertLEDOn ? "On" : "Off"), function (err) { 
         if (err) console.error('Error sending method response :\n' + err.toString());
         else console.log('200 Response to method \'' + request.methodName + '\' sent successfully.');
@@ -295,6 +298,10 @@ client.open(function (err) {
                             if (err) console.log("--------------get twin error")
                         }
                     });
+
+                    // LED 상태 이벤트 전송
+                    sendTelemetry({"AlertLEDStatus":delta}, "led-status;v1");
+
                 });
 
                 // Send reported properties
