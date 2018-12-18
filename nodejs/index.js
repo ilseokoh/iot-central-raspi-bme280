@@ -11,23 +11,23 @@ var client = clientFromConnectionString(connectionString);
 // Message 
 function handleDisigredSettings(twin) { 
     twin.on('properties.desired', function (desiredChange) { 
-        for (let setting in desiredChange) { 
-            if (settings[setting]) { 
-                console.log('Received setting: ${setting}: ${desiredChange[setting].value}');
-                settings[setting](desiredChange[setting].value, (newValue, status, message) => {
-                    var patch = {
-                        [setting]: { 
-                            value: newValue,
-                            status: status, 
-                            desiredVersion: desiredChange.$version, 
-                            message: message
-                        }
-                    }
-                    twin.properties.reported.update(patch, (err) => console.log(`Sent setting update for ${setting}; ` +
-                    (err ? `error: ${err.toString()}` : `status: success`)));
-                });
-            }
-        }
+        // for (let setting in desiredChange) { 
+        //     if (settings[setting]) { 
+        //         console.log('Received setting: ${setting}: ${desiredChange[setting].value}');
+        //         settings[setting](desiredChange[setting].value, (newValue, status, message) => {
+        //             var patch = {
+        //                 [setting]: { 
+        //                     value: newValue,
+        //                     status: status, 
+        //                     desiredVersion: desiredChange.$version, 
+        //                     message: message
+        //                 }
+        //             }
+        //             twin.properties.reported.update(patch, (err) => console.log(`Sent setting update for ${setting}; ` +
+        //             (err ? `error: ${err.toString()}` : `status: success`)));
+        //         });
+        //     }
+        // }
     });
 }
 
