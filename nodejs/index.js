@@ -303,7 +303,7 @@ client.open(function (err) {
                     'temperature_unit': temperatureUnit
                 };
                 sendTelemetry(temp, temperatureSchema);
-                console.log(`temp = ${JSON.stringify(data, null, 2)}`);
+                console.log(`temp = ${JSON.stringify(temp, null, 2)}`);
             })
             .catch((err) => {
               console.log(`BME280 read error: ${err}`);
