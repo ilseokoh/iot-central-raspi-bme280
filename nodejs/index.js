@@ -4,6 +4,7 @@ var ConnectionString = require('azure-iot-device').ConnectionString;
 var Message = require('azure-iot-device').Message;
 var async = require('async');
 var BME280 = require('bme280-sensor');
+var wpi = require('node-wiring-pi');
 
 var connectionString = 'HostName=s1iotremotemonitoringc9f9c.azure-devices.net;DeviceId=firealam-02.Real;SharedAccessKey=bxCcsNGFZeL86S4CGi87mmf/meBwND0365G1w4cRiSs=';
 
@@ -26,6 +27,7 @@ var deviceLongitude = 126.9783334;
 var deviceOnline = true;
 
 var alertLEDOn = false;
+var LED_PIN = 5;
 var emergencyButtonOn = 0;
 
 // 센서 초기화
@@ -98,10 +100,6 @@ function printErrorFor(op) {
     };
 }
 
-function generateRandomIncrement() {
-    return ((Math.random() * 2) - 1);
-}
-
 function onDirectMethod(request, response) {
     // Implement logic asynchronously here.
     console.log('--------Simulated ' + request.methodName);
@@ -118,6 +116,8 @@ function onAlertLEDOn(request, response) {
 
     // TODO: 실제로 LED 를 제어 함. 
     alertLEDOn = true;
+    if (alertLEDOn) wpi.digitalWrite(config.LEDPin, 1);
+    else wpi.digitalWrite(config.LEDPin, 0);
 
     var patch = {
         AlertLED: alertLEDOn
@@ -261,6 +261,10 @@ client.open(function (err) {
     if (err) {
         printErrorFor('open')(err);
     } else {
+
+        // LED Setup
+        wpi.setup('wpi');
+        wpi.pinMode(LED_PIN, wpi.OUTPUT);
 
         // Create device Twin
         client.getTwin(function (err, twin) {
