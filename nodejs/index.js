@@ -5,7 +5,7 @@ var MessageProcessor = require('./messageProcessor.js');
 
 var clientFromConnectionString = require('azure-iot-device-mqtt').clientFromConnectionString;
 
-var connectionString = config.clientFromConnectionString; 
+var connectionString = config.deviceConnectionString; 
 var client = clientFromConnectionString(connectionString); 
 
 // Message 
