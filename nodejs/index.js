@@ -274,7 +274,7 @@ client.open(function (err) {
 
                 twin.on('properties.desired.alertLED', function (delta) {
                     // Handle desired properties set by solution
-                    console.log('Received new desired properties:' + JSON.stringify(delta));
+                    //console.log('Received new desired properties:' + JSON.stringify(delta));
 
                     // LED On/Off
                     alertLEDOn = (delta == 'on' ? true : false);
@@ -284,7 +284,7 @@ client.open(function (err) {
                     var patch = {
                         AlertLED: alertLEDOn
                     };
-                    
+
                     // Twin 업데이트
                     client.getTwin(function (err, twin) {
                         if (!err) {
