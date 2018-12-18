@@ -298,11 +298,12 @@ client.open(function (err) {
         var sendTemperatureInterval = setInterval(function () {
             bme280.readSensorData()
             .then((data) => {
-                var data = {
+                var temp = {
                     'temperature': data.temperature_C,
                     'temperature_unit': temperatureUnit
                 };
-                sendTelemetry(data, temperatureSchema)
+                sendTelemetry(temp, temperatureSchema);
+                console.log(`temp = ${JSON.stringify(data, null, 2)}`);
             })
             .catch((err) => {
               console.log(`BME280 read error: ${err}`);
@@ -313,11 +314,12 @@ client.open(function (err) {
         var sendHumidityInterval = setInterval(function () {
             bme280.readSensorData()
             .then((data) => {
-                var data = {
+                var humi = {
                     'humidity': data.humidity,
                     'humidity_unit': humidityUnit
                 };
-                sendTelemetry(data, humiditySchema)
+                sendTelemetry(humi, humiditySchema);
+                console.log(`humi = ${JSON.stringify(humi, null, 2)}`);
             })
             .catch((err) => {
               console.log(`BME280 read error: ${err}`);
