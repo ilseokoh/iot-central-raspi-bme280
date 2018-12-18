@@ -81,7 +81,7 @@ Sensor.init(() => {
     isSensorInit = true;
 });
 
-function sendTelemetry(data, schema) {
+function sendTelemetry(client, data, schema) {
     var d = new Date();
     var payload = JSON.stringify(data);
     var message = new Message(payload);
@@ -93,7 +93,7 @@ function sendTelemetry(data, schema) {
     client.sendEvent(message, printErrorFor('send event'));
 }
 
-var sendSensorData = function() { 
+var sendSensorData = function(client) { 
     var sensorData = {}; 
     if (!isSensorInit) {
         console.log("Sensor must initialize before it's used.");
@@ -113,19 +113,19 @@ var sendSensorData = function() {
         'temperature': sensorData.temperature_C,
         'temperature_unit': temperatureUnit
     };
-    sendTelemetry(temperatureData, temperatureSchema);
+    sendTelemetry(client, temperatureData, temperatureSchema);
 
     var humidityData = {
         'humidity': sensorData.humidity,
         'humidity_unit': humidityUnit
     };
-    sendTelemetry(humidityData, humiditySchema);
+    sendTelemetry(client, humidityData, humiditySchema);
 
     var pressureData = {
         'pressure': sensorData.pressure_hPa,
         'pressure_unit': pressureUnit
       };
-      sendTelemetry(pressureData, pressureSchema);
+      sendTelemetry(client, pressureData, pressureSchema);
 }
 
 var sendDeviceProperties = function(twin) { 
