@@ -3,28 +3,28 @@
 
 const BME280 = require('bme280-sensor');
 
-var DEFAULT_OPTIONS = { 
+var DEFAULT_OPTIONS = {
     i2cBusNo: 1,
     i2cAddress: BME280.BME280_DEFAULT_I2C_ADDRESS()
 }
 
 const bme280 = new BME280(DEFAULT_OPTIONS);
 
-var init = function(cb) { 
-            this.bme280.init()
-                .then(cb)
-                .catch((err) => {
-                    console.error(err); 
-                });
-            }
+var init = function (cb) {
+    bme280.init()
+        .then(cb)
+        .catch((err) => {
+            console.error(err);
+        });
+}
 
-var read = function(cb) { 
-            this.bme280.readSensorData()
-                .then((data) => { 
-                    cb(null, data);
-                })
-                .catch(cb);
-            }
+var read = function (cb) {
+    bme280.readSensorData()
+        .then((data) => {
+            cb(null, data);
+        })
+        .catch(cb);
+}
 
 module.exports.init = init;
 module.exports.read = read;
