@@ -114,10 +114,9 @@ function onDirectMethod(request, response) {
 function onAlertLEDOn(request, response) { 
     console.log('---------------------  LED ON');
 
-    // TODO: 실제로 LED 를 제어 함. 
+    // 실제로 LED 를 제어 함. 
     alertLEDOn = true;
-    if (alertLEDOn) wpi.digitalWrite(config.LEDPin, 1);
-    else wpi.digitalWrite(config.LEDPin, 0);
+    wpi.digitalWrite(LED_PIN, 1);
 
     var patch = {
         AlertLED: alertLEDOn
@@ -277,7 +276,25 @@ client.open(function (err) {
                     // Handle desired properties set by solution
                     console.log('Received new desired properties:' + JSON.stringify(delta));
 
-                    // TODO: LED On/Off
+                    // LED On/Off
+                    alertLEDOn = (delta == 'on' ? true : false);
+                    if (alertLEDOn) wpi.digitalWrite(LED_PIN, 1);
+                    else wpi.digitalWrite(LED_PIN, 0);
+
+                    var patch = {
+                        AlertLED: alertLEDOn
+                    };
+                    
+                    // Twin 업데이트
+                    client.getTwin(function (err, twin) {
+                        if (!err) {
+                            twin.properties.reported.update(patch, function (err) {
+                                if (err) console.log("------------reported update error")
+                            });
+                        } else {
+                            if (err) console.log("--------------get twin error")
+                        }
+                    });
                 });
 
                 // Send reported properties
