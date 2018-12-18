@@ -2,19 +2,15 @@
 // github skylarstein/bme280-sensor: https://github.com/skylarstein/bme280-sensor
 
 const BME280 = require('bme280-sensor');
-var config = require('./config.json');
 
 var DEFAULT_OPTIONS = { 
     i2cBusNo: 1,
     i2cAddress: BME280.BME280_DEFAULT_I2C_ADDRESS()
 }
 
-// constructor
-function BME280Sensor(option) { 
-    this.bme280 = new BME280(options || DEFAULT_OPTIONS);
-}
+const bme280 = new BME280(DEFAULT_OPTIONS);
 
-BME280Sensor.prototype.init = function(cb) { 
+var init = function(cb) { 
             this.bme280.init()
                 .then(cb)
                 .catch((err) => {
@@ -22,7 +18,7 @@ BME280Sensor.prototype.init = function(cb) {
                 });
             }
 
-BME280Sensor.prototype.read = function(cb) { 
+var read = function(cb) { 
             this.bme280.readSensorData()
                 .then((data) => { 
                     cb(null, data);

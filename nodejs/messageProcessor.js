@@ -76,17 +76,10 @@ var reportedProperties = {
     "AlertLED": config.alertLEDOn
 }
 
-function MessageProcessor(config) { 
-    var options = { 
-        i2cBusNo: config.i2cBusNo,
-        i2cAddress: config.i2cAddress
-    }
-
-    Sensor.init(options, () => {
-        console.log("BME280 sensor initialized successfully.");
-        this.isSensorInit = true;
-    });
-}
+Sensor.init(() => {
+    console.log("BME280 sensor initialized successfully.");
+    this.isSensorInit = true;
+});
 
 function sendTelemetry(data, schema) {
     if (deviceOnline) {
@@ -104,7 +97,7 @@ function sendTelemetry(data, schema) {
     }
 }
 
-MessageProcessor.prototype.sendTelemetry = function() { 
+var sendTelemetry = function() { 
     var sensorData = {}; 
     if (!isSensorInit) {
         console.log("Sensor must initialize before it's used.");
@@ -139,7 +132,7 @@ MessageProcessor.prototype.sendTelemetry = function() {
       sendTelemetry(pressureData, pressureSchema);
 }
 
-MessageProcessor.prototype.sendDeviceProperties = function(twin) { 
+var sendDeviceProperties = function(twin) { 
     twin.properties.reported.update(reportedProperties, (err) => {
         console.log(`Sent device properties; ` +
         (err ? `error: ${err.toString()}` : `status: success`));

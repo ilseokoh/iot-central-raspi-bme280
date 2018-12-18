@@ -10,8 +10,6 @@ var connectionString = config.clientFromConnectionString;
 var client = clientFromConnectionString(connectionString); 
 
 // Message 
-messageProcessor = new MessageProcessor(config);
-
 function handleDisigredSettings(twin) { 
     twin.on('properties.desired', function (desiredChange) { 
         for (let setting in desiredChange) { 
@@ -40,7 +38,7 @@ var connectCallback = (err) => {
     } else { 
         console.log('Device successfully connected to Azure IoT Central'); 
         // 주기적으로 Telemetry 보냄. 
-        setInterval(messageProcessor.sendTelemetry(), config.interval); 
+        setInterval(MessageProcessor.sendTelemetry(), config.interval); 
         // TODO: 보내기 실패시 큐에 넣어서 보관하다가 연결되면 보냄. 
 
         // Twin 설정 
@@ -49,7 +47,7 @@ var connectCallback = (err) => {
                 console.log('Error getting device twin: ${err.toString()}');
             } else { 
                 // 연결되면 한번 디바이스 정보를 보낸다. 
-                messageProcessor.sendDeviceProperties(twin); 
+                MessageProcessor.sendDeviceProperties(twin); 
                 // IoT Central에서 보낸 변경된 설정 값 (fanSpeed, setTemperature)에 대한 처리 핸들러 
                 handleDisigredSettings(twin);
             }
