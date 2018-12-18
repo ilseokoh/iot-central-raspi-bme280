@@ -139,4 +139,5 @@ var sendDeviceProperties = function(twin) {
     });
 }
 
-module.exports = MessageProcessor;
+module.exports.sendTelemetry = sendTelemetry;
+module.exports.sendDeviceProperties = sendDeviceProperties;

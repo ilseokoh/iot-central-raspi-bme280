@@ -26,7 +26,8 @@ var read = function(cb) {
                 .catch(cb);
             }
 
-module.exports = BME280Sensor;
+module.exports.init = init;
+module.exports.read = read;
 
 // read data from sensor 
 // data = {
