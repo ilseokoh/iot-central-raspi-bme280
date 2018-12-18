@@ -82,19 +82,15 @@ Sensor.init(() => {
 });
 
 function sendTelemetry(data, schema) {
-    if (deviceOnline) {
-        var d = new Date();
-        var payload = JSON.stringify(data);
-        var message = new Message(payload);
-        message.properties.add('$$CreationTimeUtc', d.toISOString());
-        message.properties.add('$$MessageSchema', schema);
-        message.properties.add('$$ContentType', 'JSON');
+    var d = new Date();
+    var payload = JSON.stringify(data);
+    var message = new Message(payload);
+    message.properties.add('$$CreationTimeUtc', d.toISOString());
+    message.properties.add('$$MessageSchema', schema);
+    message.properties.add('$$ContentType', 'JSON');
 
-        //console.log('Sending device message data:\n' + payload);
-        client.sendEvent(message, printErrorFor('send event'));
-    } else {
-        console.log('Offline, not sending telemetry');
-    }
+    //console.log('Sending device message data:\n' + payload);
+    client.sendEvent(message, printErrorFor('send event'));
 }
 
 var sendSensorData = function() { 
