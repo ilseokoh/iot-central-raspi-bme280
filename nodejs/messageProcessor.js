@@ -78,7 +78,7 @@ var reportedProperties = {
 
 Sensor.init(() => {
     console.log("BME280 sensor initialized successfully.");
-    this.isSensorInit = true;
+    isSensorInit = true;
 });
 
 function sendTelemetry(data, schema) {
