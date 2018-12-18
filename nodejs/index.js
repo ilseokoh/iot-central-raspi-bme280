@@ -37,7 +37,7 @@ var connectCallback = (err) => {
     } else { 
         console.log('Device successfully connected to Azure IoT Central'); 
         // 주기적으로 Telemetry 보냄. 
-        setInterval(MessageProcessor.sendTelemetry(), config.interval); 
+        setInterval(MessageProcessor.sendSensorData, config.interval); 
         // TODO: 보내기 실패시 큐에 넣어서 보관하다가 연결되면 보냄. 
 
         // Twin 설정 

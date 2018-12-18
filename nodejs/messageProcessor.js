@@ -97,7 +97,7 @@ function sendTelemetry(data, schema) {
     }
 }
 
-var sendTelemetry = function() { 
+var sendSensorData = function() { 
     var sensorData = {}; 
     if (!isSensorInit) {
         console.log("Sensor must initialize before it's used.");
@@ -139,5 +139,5 @@ var sendDeviceProperties = function(twin) {
     });
 }
 
-module.exports.sendTelemetry = sendTelemetry;
+module.exports.sendSensorData = sendSensorData;
 module.exports.sendDeviceProperties = sendDeviceProperties;
