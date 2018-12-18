@@ -2,21 +2,109 @@
 
 var Message = require('azure-iot-device').Message; 
 var Sensor = require('./bme280');
+var config = require('./config.json');
 
 var isSensorInit = false;
 
+var temperatureUnit = 'C';
+var humidityUnit = '%';
+var pressureUnit = 'hPa'
+
+var temperatureSchema = 'firealarm-temperature;v1';
+var humiditySchema = 'firealarm-humidity;v1';
+var pressureSchema = 'firealarm-pressure;v1';
+
+var reportedProperties = {
+    "Protocol": "MQTT",
+    "SupportedMethods": "Reboot,FirmwareUpdate,AlertLEDOn",
+    "Telemetry": {
+        "TemperatureSchema": {
+            "Interval": "00:00:05",
+            "MessageTemplate": "{\"temperature\":${temperature},\"temperature_unit\":\"${temperature_unit}\"}",
+            "MessageSchema": {
+                "Name": temperatureSchema,
+                "Format": "JSON",
+                "Fields": {
+                    "temperature": "Double",
+                    "temperature_unit": "Text"
+                }
+            }
+        },
+        "HumiditySchema": {
+            "Interval": "00:00:05",
+            "MessageTemplate": "{\"humidity\":${humidity},\"humidity_unit\":\"${humidity_unit}\"}",
+            "MessageSchema": {
+                "Name": 'firealarm-humidity;v1',
+                "Format": "JSON",
+                "Fields": {
+                    "humidity": "Double",
+                    "humidity_unit": "Text"
+                }
+            }
+        },
+        "PressureSchema": {
+            "Interval": "00:00:05",
+            "MessageTemplate": "{\"pressure\":${pressure},\"pressure_unit\":\"${pressure_unit}\"}",
+            "MessageSchema": {
+                "Name": pressureSchema,
+                "Format": "JSON",
+                "Fields": {
+                    "pressure": "Double",
+                    "pressure_unit": "Text"
+                }
+            }
+        },
+        "EmergencySchema": {
+            "Interval": "00:00:01",
+            "MessageTemplate": "{\"emergencyButtonOn\":${emergencyButtonOn}}",
+            "MessageSchema": {
+                "Name": humiditySchema,
+                "Format": "JSON",
+                "Fields": {
+                    "emergencyButtonOn": "Integer"
+                }
+            }
+        },
+    },
+    "Type": config.deviceType,
+    "Firmware": config.deviceFirmware,
+    "FirmwareUpdateStatus": config.deviceFirmwareUpdateStatus,
+    "Location": config.deviceLocation,
+    "Latitude": config.deviceLatitude,
+    "Longitude": config.deviceLongitude,
+    "Online": config.deviceOnline,
+    "AlertLED": config.alertLEDOn
+}
+
 function MessageProcessor(config) { 
-    const options = {
-        i2cBusNo: config.i2cBusNo || 1,
-        i2cAddress: config.i2cAddress || BME280.BME280_DEFAULT_I2C_ADDRESS()
+    var options = { 
+        i2cBusNo: config.i2cBusNo,
+        i2cAddress: config.i2cAddress
     }
+
     Sensor.init(options, () => {
         console.log("BME280 sensor initialized successfully.");
         this.isSensorInit = true;
     });
 }
 
-function sendTelemetry() { 
+function sendTelemetry(data, schema) {
+    if (deviceOnline) {
+        var d = new Date();
+        var payload = JSON.stringify(data);
+        var message = new Message(payload);
+        message.properties.add('$$CreationTimeUtc', d.toISOString());
+        message.properties.add('$$MessageSchema', schema);
+        message.properties.add('$$ContentType', 'JSON');
+
+        //console.log('Sending device message data:\n' + payload);
+        client.sendEvent(message, printErrorFor('send event'));
+    } else {
+        console.log('Offline, not sending telemetry');
+    }
+}
+
+MessageProcessor.prototype.sendTelemetry = function() { 
     var sensorData = {}; 
     if (!isSensorInit) {
         console.log("Sensor must initialize before it's used.");
@@ -32,20 +120,30 @@ function sendTelemetry() {
         sensorData = data;
     });
 
-    var data = JSON.stringify({ 
-        temperature: sensorData.temperature_C,
-        humidity: sensorData.humidity, 
-        pressure: sensorData.pressure_hPa, 
-        fanmode: (sensorData.temperature_C > 25)  ? 1 : 0, 
-        overheat: (sensorData.temperature_C > config.temperatureAlert) ? "ER123" : undefined
-    });
+    var temperatureData = {
+        'temperature': sensorData.temperature_C,
+        'temperature_unit': temperatureUnit
+    };
+    sendTelemetry(temperatureData, temperatureSchema);
 
-    var message = new Message(data);
+    var humidityData = {
+        'humidity': sensorData.humidity,
+        'humidity_unit': humidityUnit
+    };
+    sendTelemetry(humidityData, humiditySchema);
 
-    client.sendEvent(message, (err, res) => {
-        console.log(`Sent message: ${message.getData()}` +
-                (err ? `; error: ${err.toString()}` : '') +
-                (res ? `; status: ${res.constructor.name}` : ''));
+    var pressureData = {
+        'pressure': sensorData.pressure_hPa,
+        'pressure_unit': pressureUnit
+      };
+      sendTelemetry(pressureData, pressureSchema);
+}
+
+MessageProcessor.prototype.sendDeviceProperties = function(twin) { 
+    twin.properties.reported.update(reportedProperties, (err) => {
+        console.log(`Sent device properties; ` +
+        (err ? `error: ${err.toString()}` : `status: success`));
     });
 }
 
+module.exports = MessageProcessor;

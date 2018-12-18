@@ -1,4 +1,4 @@
-'use stric';
+'use strict';
 
 var config = require('./config.json');
 var MessageProcessor = require('./messageProcessor.js');
@@ -9,22 +9,10 @@ var wpi = require('wiring-pi');
 var connectionString = config.clientFromConnectionString; 
 var client = clientFromConnectionString(connectionString); 
 
-
 // Message 
 messageProcessor = new MessageProcessor(config);
 
-function sendDeviceProperties(twin) { 
-    var properties = {
-        serialNumber: '123-123',
-        manufacturer: 'Kevin Co'
-    };
-    twin.properties.reported.update(properties, (err) => {
-        console.log(`Sent device properties; ` +
-        (err ? `error: ${err.toString()}` : `status: success`));
-    });
-}
-
-function handleSettings(twin) { 
+function handleDisigredSettings(twin) { 
     twin.on('properties.desired', function (desiredChange) { 
         for (let setting in desiredChange) { 
             if (settings[setting]) { 
@@ -51,17 +39,17 @@ var connectCallback = (err) => {
         console.log('Device could not connect to Azure IoT Central: ${err.toString()');
     } else { 
         console.log('Device successfully connected to Azure IoT Central'); 
-
         // 주기적으로 Telemetry 보냄. 
-        setInterval(sendTelemetry, config.interval); 
+        setInterval(messageProcessor.sendTelemetry(), config.interval); 
         // TODO: 보내기 실패시 큐에 넣어서 보관하다가 연결되면 보냄. 
 
+        // Twin 설정 
         client.getTwin((err, twin) => { 
             if (err) { 
                 console.log('Error getting device twin: ${err.toString()}');
             } else { 
                 // 연결되면 한번 디바이스 정보를 보낸다. 
-                sendDeviceProperties(twin); 
+                messageProcessor.sendDeviceProperties(twin); 
                 // IoT Central에서 보낸 변경된 설정 값 (fanSpeed, setTemperature)에 대한 처리 핸들러 
                 handleDisigredSettings(twin);
             }
