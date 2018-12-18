@@ -90,7 +90,7 @@ function sendTelemetry(client, data, schema) {
     message.properties.add('$$ContentType', 'JSON');
 
     //console.log('Sending device message data:\n' + payload);
-    client.sendEvent(message, printErrorFor('send event'));
+    client.sendEvent(message, console.log('send event'));
 }
 
 var sendSensorData = function(client) { 
